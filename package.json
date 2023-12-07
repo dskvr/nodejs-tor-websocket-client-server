@@ -1,0 +1,10 @@
+{
+  "name": "ws-tor",
+  "version": "0.0.1",
+  "type": "module", 
+  "description": "Client-side wrapper for `ws` that implements `socks-proxy-agent` for client websockets over tor",
+  "main": "src/index.js",
+  "repository": "https://github.com/SlowsieNT/nodejs-tor-websocket-client-server.git",
+  "author": "SlowsieNT <SlowsieNT@users.noreply.github.com>",
+  "license": "Unlicense"
+}

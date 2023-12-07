@@ -1,40 +1,7 @@
-## WebSocket on Tor?
-Yes, it's possible with just few lines of code!<br>
-I did not find anything on my search engine, so here it is!<br>
+## ws-tor
+Simple wrapper for `ws` that implements `socks-proxy-agent` to simplify client connections to a websocket over tor. 
 
-### Tor Configuration File (yes, it's as usual)
-```c
-AvoidDiskWrites 1
-HiddenServiceDir EMPTY_DIR_PATH
-HiddenServicePort 1502 8080
-```
-Yes, `EMPTY_DIR_PATH` does not need to be empty, use your old yet delicious onion!<br>
-1502 is onion's port (exclusive to Tor only!)<br>
-8080 is server's port (localhost!)<br>
-
-### Server Code (example)
-```js
-var WebSocket = require('ws');
-var vServer = new WebSocket.Server({
-	port: 8080
-});
-
-var vWSList = [];
-vServer.on('connection', function(vWS) {
-	console.log("Connected!!")
-	vWSList.push(vWS);
-	// When you receive a message, send that message to every socket.
-	vWS.on('message', function(msg) {
-		console.log("Message received!!")
-	});
-	// When a socket closes, or disconnects, remove it from the array.
-	vWS.on('close', function() {
-		vWSList = vWSList.filter(s => s !== vWS);
-	});
-});
-```
-
-### Client Code (example)
+### Usage 
 ```js
 var host = "aaaaaaaaaaaaaaaaaaaaaaaaaaa.onion";
 var port = 1502;
@@ -51,3 +18,35 @@ socket.on('message', function (data, flags) {
 	//socket.close();
 });
 ```
+
+### Server Example 
+```js
+var WebSocket = require('ws');
+var server = new WebSocket.Server({
+	port: 8080
+});
+
+var wsList = [];
+server.on('connection', function($ws) {
+	console.log("Connected!!")
+	wsList.push($ws);
+	// When you receive a message, send that message to every socket.
+	$ws.on('message', function(msg) {
+		console.log("Message received!!")
+	});
+	// When a socket closes, or disconnects, remove it from the array.
+	$ws.on('close', function() {
+		wsList = wsList.filter(s => s !== $ws);
+	});
+});
+```
+### Tor Configuration
+You will need to have a tor daemon running with `HiddenServiceDir` and `HiddenServicePort` set, it's recommended to have `AvoidDiskWrites 1`. 
+
+```c
+AvoidDiskWrites 1
+HiddenServiceDir EMPTY_DIR_PATH
+HiddenServicePort 1502 8080
+```
+
+In the example above, 1502 is onion's hidden service port and 8080 is your server's port. Change where necessary.  
